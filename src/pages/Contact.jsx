@@ -4,7 +4,7 @@ import { Mail, MessageCircle, Linkedin, Github, Instagram } from "lucide-react";
 
 export default function Contact() {
   const email = "hajnjpk2121@gmail.com";
-  const whatsappNumber = "9233350502307";
+  const whatsappNumber = "923350502307";
   const linkedinUrl = "https://www.linkedin.com/in/hammad-azeem-61495a215";
   const githubUrl = "https://github.com/Hammad2323";
   const instagramUrl = "https://www.instagram.com/hhammad23";
