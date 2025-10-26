@@ -1,78 +1,64 @@
 import React, { useEffect, useState } from "react";
-import { collection, getDocs, query, orderBy } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
 import { motion } from "framer-motion";
-import { Github, Globe } from "lucide-react";
 import { Link } from "react-router-dom";
+import "@fontsource/poppins/500.css";
+import "@fontsource/orbitron/700.css";
 
 export default function Projects() {
   const [projects, setProjects] = useState([]);
 
   useEffect(() => {
     const fetchProjects = async () => {
-      try {
-        const q = query(collection(db, "projects"), orderBy("createdAt", "desc"));
-        const querySnapshot = await getDocs(q);
-        const data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setProjects(data);
-      } catch (err) {
-        console.error("Error fetching projects:", err);
-      }
+      const querySnapshot = await getDocs(collection(db, "projects"));
+      const projectsData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setProjects(projectsData);
     };
-
     fetchProjects();
   }, []);
 
   return (
-    <section className="bg-white py-20 px-6 md:px-20 font-[Poppins]">
-      <h2 className="text-4xl font-bold text-orange-500 mb-12 text-center">
-        My Projects
-      </h2>
+    <section className="min-h-screen bg-gradient-to-b from-[#0A0F24] to-[#1A2238] py-20 px-8 font-[Poppins]">
+      <motion.h1
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="text-center text-4xl md:text-5xl font-[Orbitron] text-[#F8F8F8] mb-12"
+      >
+        My <span className="text-[#8B5CF6]">Projects</span>
+      </motion.h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {projects.map((project) => (
-          <Link key={project.id} to={`/projects/${project.id}`}>
-            <motion.div
-              className="bg-white shadow-2xl rounded-2xl overflow-hidden hover:scale-105 transition-transform duration-300 cursor-pointer"
-              whileHover={{ scale: 1.05 }}
-            >
-              {project.imageUrl && (
-                <img
-                  src={project.imageUrl}
-                  alt={project.title}
-                  className="w-full h-64 object-cover"
-                />
-              )}
-              <div className="p-6">
-                <h3 className="text-2xl font-semibold mb-2 text-gray-900">{project.title}</h3>
-                <p className="text-gray-700 mb-4">{project.description}</p>
-                <div className="flex gap-4">
-                  {project.githubUrl && (
-                    <a
-                      href={project.githubUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-1 text-gray-700 hover:text-gray-900 transition"
-                      onClick={(e) => e.stopPropagation()} // prevent Link click
-                    >
-                      <Github /> Code
-                    </a>
-                  )}
-                  {project.liveUrl && (
-                    <a
-                      href={project.liveUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-1 text-gray-700 hover:text-orange-500 transition"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <Globe /> Live
-                    </a>
-                  )}
-                </div>
-              </div>
-            </motion.div>
-          </Link>
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-10 max-w-7xl mx-auto">
+        {projects.map((project, index) => (
+          <motion.div
+            key={project.id}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.15 }}
+            whileHover={{ y: -8, scale: 1.03 }}
+            className="relative bg-[#11162C] border border-[#1F2A44] rounded-2xl shadow-lg p-6 group transition-all duration-500 hover:shadow-[#8B5CF6]/30"
+          >
+            <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-[#8B5CF6]/10 to-[#38BDF8]/10 opacity-0 group-hover:opacity-100 blur-2xl transition-opacity duration-700"></div>
+
+            <div className="relative z-10">
+              <h2 className="text-2xl font-[Orbitron] text-[#C9A7FF] mb-3 group-hover:text-[#38BDF8] transition-colors">
+                {project.title}
+              </h2>
+              <p className="text-[#C7C7C7] text-sm leading-relaxed line-clamp-3 mb-6">
+                {project.description?.slice(0, 150) || "No description available."}
+              </p>
+              <Link
+                to={`/projects/${project.id}`}
+                className="inline-block px-6 py-2 text-[#0A0F24] bg-gradient-to-r from-[#8B5CF6] to-[#38BDF8] font-semibold rounded-full shadow-md hover:shadow-[#8B5CF6]/40 transition-all duration-300"
+              >
+                View Details
+              </Link>
+            </div>
+          </motion.div>
         ))}
       </div>
     </section>

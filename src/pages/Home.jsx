@@ -1,81 +1,73 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Github, Linkedin, Globe } from "lucide-react";
-import heroImage from "../assets/hero.png"; // 🔹 Add your image in /src/assets folder
+import heroImage from "../assets/hero.png"; 
+import "@fontsource/poppins/500.css";
+import "@fontsource/orbitron/700.css";
 
 export default function Home() {
   return (
-    <section className="bg-gradient-to-b from-orange-50 to-white min-h-screen flex flex-col md:flex-row items-center justify-center px-6 md:px-20 py-16">
-      {/* === Left Content === */}
+    <section className="min-h-screen bg-gradient-to-b from-[#0A0F24] to-[#1A2238] flex flex-col-reverse md:flex-row items-center justify-center px-6 md:px-16 pt-24 md:pt-32 font-[Poppins]">
+      
       <motion.div
-        className="flex-1 text-center md:text-left"
-        initial={{ opacity: 0, x: -40 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.8 }}
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.9, ease: "easeOut" }}
+        className="text-center md:text-left md:w-1/2 space-y-6 mt-10 md:mt-0"
       >
-        <h1 className="text-5xl md:text-6xl font-extrabold text-gray-800 mb-4">
+        <h1 className="text-4xl md:text-6xl font-[Orbitron] font-bold leading-tight text-[#F8F8F8]">
           Hi, I’m{" "}
-          <span className="text-orange-500 drop-shadow-md">Hammad Azeem</span>
+          <span className="text-[#8B5CF6] drop-shadow-sm">Hammad Azeem</span>
         </h1>
-        <h2 className="text-2xl md:text-3xl font-semibold text-gray-600 mb-6">
+        <h2 className="text-2xl md:text-3xl font-semibold text-[#B3B3B3]">
           Frontend Developer & UI/UX Enthusiast
         </h2>
-        <p className="text-gray-700 text-lg mb-8 max-w-xl">
-          I build modern, responsive, and visually stunning web experiences that
-          bring ideas to life. Passionate about React, Tailwind, and seamless
-          user interactions.
+
+        <p className="text-[#C7C7C7] text-base md:text-lg max-w-md mx-auto md:mx-0 leading-relaxed">
+          I design and develop elegant, high-performance websites that merge
+          creativity with seamless user experiences. My goal is to make every
+          project not just functional — but visually inspiring.
         </p>
 
-        <div className="flex flex-wrap justify-center md:justify-start gap-4">
+        <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start pt-4">
           <motion.a
             href="/projects"
-            className="bg-orange-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-orange-600 transition flex items-center gap-2"
             whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="px-8 py-3 rounded-full bg-gradient-to-r from-[#8B5CF6] to-[#38BDF8] text-[#0A0F24] font-semibold shadow-md hover:shadow-[#8B5CF6]/40 transition-all duration-300"
           >
-            View My Work <ArrowRight size={18} />
+            View My Work
           </motion.a>
           <motion.a
             href="/contact"
-            className="border-2 border-orange-500 text-orange-600 px-6 py-3 rounded-lg font-semibold hover:bg-orange-50 transition"
             whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="px-8 py-3 rounded-full border border-[#38BDF8] text-[#38BDF8] font-semibold hover:bg-[#38BDF8]/10 transition-all duration-300"
           >
             Contact Me
           </motion.a>
         </div>
-
-        {/* Social Icons */}
-        <div className="flex justify-center md:justify-start gap-6 mt-8">
-          <a
-            href="https://github.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-gray-600 hover:text-gray-900 transition"
-          >
-            <Github size={28} />
-          </a>
-          <a
-            href="https://linkedin.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-gray-600 hover:text-blue-700 transition"
-          >
-            <Linkedin size={28} />
-          </a>
-         
-        </div>
       </motion.div>
 
-      {/* === Right Side Image === */}
+      
       <motion.div
-        className="flex-1 flex justify-center mt-10 md:mt-0"
-        initial={{ opacity: 0, x: 40 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.8 }}
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.9, delay: 0.2 }}
+        className="flex justify-center md:justify-end md:w-1/2"
       >
         <img
           src={heroImage}
-          alt="Developer Illustration"
-          className="w-72 md:w-96 drop-shadow-2xl rounded-2xl"
+          alt="Hammad Azeem"
+          className="w-64 sm:w-80 md:w-[440px] object-cover select-none"
+          style={{
+            border: "none",
+            outline: "none",
+            boxShadow: "none",
+            WebkitMaskImage:
+              "linear-gradient(to bottom, rgba(0,0,0,1) 90%, rgba(0,0,0,0))",
+            maskImage:
+              "linear-gradient(to bottom, rgba(0,0,0,1) 90%, rgba(0,0,0,0))",
+          }}
         />
       </motion.div>
     </section>

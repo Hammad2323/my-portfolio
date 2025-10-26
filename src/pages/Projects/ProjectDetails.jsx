@@ -3,131 +3,100 @@ import { useParams, Link } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import { motion } from "framer-motion";
-import { ArrowLeft } from "lucide-react";
+import "@fontsource/poppins/500.css";
+import "@fontsource/orbitron/700.css";
 
-export default function ProjectDetails() {
+export default function ProjectDetail() {
   const { id } = useParams();
   const [project, setProject] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProject = async () => {
       try {
         const docRef = doc(db, "projects", id);
         const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setProject(docSnap.data());
-        }
-      } catch (err) {
-        console.error("Error fetching project:", err);
+        if (docSnap.exists()) setProject(docSnap.data());
+      } catch (error) {
+        console.error("Error fetching project:", error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchProject();
   }, [id]);
 
-  if (!project) return <p className="text-center py-20">Loading...</p>;
+  if (loading)
+    return <p className="text-center mt-20 text-gray-400">Loading project...</p>;
 
-  // Determine grid columns based on number of images
-  const imagesCount = project.images?.length || (project.imageUrl ? 1 : 0);
-  let gridCols = 1;
-  if (imagesCount === 2) gridCols = 2;
-  else if (imagesCount === 4) gridCols = 2;
-  else if (imagesCount === 6) gridCols = 3;
-  else if (imagesCount === 8) gridCols = 4;
-  else if (imagesCount === 10) gridCols = 5;
+  if (!project)
+    return (
+      <div className="text-center mt-20 text-gray-400">
+        <p>Project not found.</p>
+        <Link to="/projects" className="text-[#38BDF8] hover:underline mt-4 block">
+          ← Back to Projects
+        </Link>
+      </div>
+    );
 
   return (
-    <section className="bg-orange-50 min-h-screen px-6 md:px-20 py-12 font-[Poppins]">
-      {/* Back Link */}
+    <section className="min-h-screen bg-gradient-to-b from-[#0A0F24] to-[#1A2238] text-[#E5E5E5] py-20 px-6 md:px-16 font-[Poppins] select-none">
       <Link
         to="/projects"
-        className="flex items-center gap-2 text-orange-500 font-semibold mb-6"
+        className="text-[#38BDF8] hover:text-[#8B5CF6] transition-colors block mb-8 text-lg"
       >
-        <ArrowLeft size={20} /> Back to Projects
+        ← Back to Projects
       </Link>
 
-      {/* Project Title */}
-      <motion.h1
-        className="text-4xl md:text-5xl font-bold text-white bg-orange-500 px-6 py-4 rounded-lg mb-8 text-center md:text-left shadow-lg"
-        initial={{ opacity: 0, y: -20 }}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        className="max-w-5xl mx-auto text-center"
       >
-        {project.title}
-      </motion.h1>
+        <h1 className="text-4xl md:text-5xl font-[Orbitron] mb-4 text-[#C9A7FF]">
+          {project.title}
+        </h1>
+        <p className="text-[#C7C7C7] text-lg mb-10 leading-relaxed">
+          {project.description}
+        </p>
 
-      {/* Project Description */}
-      <motion.p
-        className="text-gray-700 text-lg mb-8 max-w-4xl"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
-      >
-        {project.description}
-      </motion.p>
-
-      {/* Images / Videos Grid */}
-      <div
-        className={`grid gap-4 ${
-          imagesCount > 0 ? `grid-cols-1 md:grid-cols-${gridCols}` : ""
-        }`}
-      >
-        {/* Single image if imageUrl exists */}
-        {project.imageUrl && !project.images && (
-          <motion.img
-            src={project.imageUrl}
-            alt={project.title}
-            className="w-full rounded-lg shadow-lg"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-          />
+        
+        {project.images && project.images.length > 0 && (
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 mb-10">
+            {project.images.map((url, index) => (
+              <div
+                key={index}
+                className="relative overflow-hidden rounded-2xl border border-[#2D3C5A] shadow-lg hover:shadow-[#8B5CF6]/30 transition-all duration-500"
+              >
+                <img
+                  src={url}
+                  alt={`${project.title} ${index + 1}`}
+                  className="w-full h-60 object-cover transform hover:scale-110 transition-transform duration-700"
+                  onContextMenu={(e) => e.preventDefault()} 
+                  draggable="false"
+                />
+              </div>
+            ))}
+          </div>
         )}
 
-        {/* Multiple images */}
-        {project.images?.map((img, i) => (
-          <motion.img
-            key={i}
-            src={img}
-            alt={`${project.title}-${i}`}
-            className="w-full rounded-lg shadow-lg"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-          />
-        ))}
-
-        {/* Video */}
+      
         {project.videoUrl && (
-          <motion.video
-            src={project.videoUrl}
-            controls
-            className="w-full rounded-lg shadow-lg"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-          />
+          <div className="mt-10">
+            <h2 className="text-2xl font-[Orbitron] text-[#8B5CF6] mb-4">
+              Project Video
+            </h2>
+            <video
+              controls
+              src={project.videoUrl}
+              className="w-full max-w-3xl mx-auto rounded-2xl border border-[#2D3C5A] shadow-lg"
+              onContextMenu={(e) => e.preventDefault()} 
+              controlsList="nodownload noplaybackrate"
+            />
+          </div>
         )}
-      </div>
-
-      {/* Links */}
-      <div className="flex gap-4 mt-8">
-        {project.githubUrl && (
-          <a
-            href={project.githubUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300 transition"
-          >
-            View Code
-          </a>
-        )}
-        {project.liveUrl && (
-          <a
-            href={project.liveUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition"
-          >
-            Live Demo
-          </a>
-        )}
-      </div>
+      </motion.div>
     </section>
   );
 }

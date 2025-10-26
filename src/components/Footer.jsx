@@ -1,46 +1,68 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Mail, MessageCircle, Linkedin, Github, Instagram } from "lucide-react";
 
 export default function Footer() {
-  // 🔹 Replace these with your actual contact info
-  const email = "youremail@example.com";
-  const whatsappNumber = "923001234567";
-  const linkedinUrl = "https://www.linkedin.com/in/yourprofile";
-  const githubUrl = "https://github.com/yourusername";
-  const instagramUrl = "https://www.instagram.com/yourusername";
+  const email = "hajnjpk2121@gmail.com";
+  const whatsappNumber = "9233350502307";
+  const linkedinUrl = "https://www.linkedin.com/in/hammad-azeem-61495a215";
+  const githubUrl = "https://github.com/Hammad2323";
+  const instagramUrl = "https://www.instagram.com/hhammad23";
+
+  const [toast, setToast] = useState("");
+
+  const handleClick = (message, link) => {
+    setToast(message);
+    window.open(link, "_blank", "noopener,noreferrer");
+
+    setTimeout(() => {
+      setToast("");
+    }, 2000);
+  };
 
   return (
-    <footer className="bg-gradient-to-r from-orange-50 to-orange-100 py-10 text-center font-[Poppins] border-t border-orange-200">
-      {/* === Social Links === */}
+    <footer className="relative bg-[#050A1F] border-t border-[#1A1F35] py-10 text-center font-[Poppins] overflow-hidden">
+  
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 30 }}
+            transition={{ duration: 0.4 }}
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-gradient-to-r from-[#8B5CF6] to-[#38BDF8] text-[#0A0F24] px-6 py-3 rounded-full shadow-lg font-semibold text-sm"
+          >
+            {toast}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      
       <div className="flex justify-center gap-8 mb-6 flex-wrap">
         {[
-          { icon: Mail, link: `mailto:${email}`, color: "bg-orange-100", hover: "hover:bg-orange-200" },
-          { icon: MessageCircle, link: `https://wa.me/${whatsappNumber}`, color: "bg-green-100", hover: "hover:bg-green-200" },
-          { icon: Linkedin, link: linkedinUrl, color: "bg-blue-100", hover: "hover:bg-blue-200" },
-          { icon: Github, link: githubUrl, color: "bg-gray-100", hover: "hover:bg-gray-200" },
-          { icon: Instagram, link: instagramUrl, color: "bg-pink-100", hover: "hover:bg-pink-200" },
+          { icon: Mail, link: `mailto:${email}`, msg: "Opening Email..." },
+          { icon: MessageCircle, link: `https://wa.me/${whatsappNumber}`, msg: "Opening WhatsApp..." },
+          { icon: Linkedin, link: linkedinUrl, msg: "Opening LinkedIn..." },
+          { icon: Github, link: githubUrl, msg: "Opening GitHub..." },
+          { icon: Instagram, link: instagramUrl, msg: "Opening Instagram..." },
         ].map((item, i) => (
-          <motion.a
+          <motion.button
             key={i}
-            href={item.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`${item.color} ${item.hover} p-4 rounded-full shadow-md transition-all duration-300`}
+            onClick={() => handleClick(item.msg, item.link)}
+            className="p-4 rounded-full bg-[#0E1530] hover:bg-[#1A234A] transition-all duration-300"
             whileHover={{ scale: 1.2, rotate: 5 }}
             whileTap={{ scale: 0.95 }}
           >
-            <item.icon className="w-6 h-6 text-orange-500" />
-          </motion.a>
+            <item.icon className="w-6 h-6 text-[#38BDF8]" />
+          </motion.button>
         ))}
       </div>
 
-      {/* === Divider Line === */}
-      <div className="w-24 h-[2px] bg-orange-300 mx-auto mb-4"></div>
+      <div className="w-24 h-[2px] mx-auto bg-gradient-to-r from-[#8B5CF6] to-[#38BDF8] mb-4"></div>
 
-      {/* === Copyright === */}
-      <p className="text-gray-700 text-sm">
-        © {new Date().getFullYear()} <span className="font-semibold text-orange-500">Your Name</span>. All Rights Reserved.
+      <p className="text-[#B3B3B3] text-sm">
+        © {new Date().getFullYear()}{" "}
+        <span className="font-semibold text-[#38BDF8]">Hammad Azeem</span>. All Rights Reserved.
       </p>
     </footer>
   );

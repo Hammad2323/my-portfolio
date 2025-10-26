@@ -1,90 +1,87 @@
 import React, { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import "@fontsource/orbitron/700.css";
+import "@fontsource/poppins/500.css";
 
 export default function Navbar() {
-  const [open, setOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
 
-  const navItems = [
-    { name: "Home", path: "/" },
-    { name: "About", path: "/about" },
-    { name: "Projects", path: "/projects" },
-    { name: "Contact", path: "/contact" },
+  const links = [
+    { to: "/", label: "Home" },
+    { to: "/projects", label: "Projects" },
+    { to: "/about", label: "About" },
+    { to: "/contact", label: "Contact" },
   ];
 
   return (
-    <header className="bg-gradient-to-r from-orange-100 to-orange-200 shadow-md font-[Poppins] sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
-        {/* === Logo / Name === */}
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          className="text-2xl font-extrabold text-orange-600"
-        >
-          <Link to="/">MyPortfolio</Link>
+    <header className="bg-[#050A1F] sticky top-0 z-50 shadow-md border-b border-[#1A1F35]">
+      <div className="container mx-auto flex justify-between items-center px-6 py-4">
+      
+        <motion.div whileHover={{ scale: 1.03 }} className="select-none">
+          <Link
+            to="/"
+            className="text-3xl font-[Orbitron] tracking-widest bg-gradient-to-r from-[#8B5CF6] to-[#38BDF8] text-transparent bg-clip-text"
+          >
+            H@ Vision
+          </Link>
+          <p className="text-[#B3B3B3] text-sm tracking-wider mt-1 font-[Poppins]">
+            Where Creativity Meets Code.
+          </p>
         </motion.div>
 
-        {/* === Desktop Nav === */}
-        <nav className="hidden md:flex gap-8 text-gray-700 font-medium">
-          {navItems.map((item, index) => (
-            <NavLink
-              key={index}
-              to={item.path}
-              className={({ isActive }) =>
-                `transition-all duration-300 hover:text-orange-600 ${
-                  isActive ? "text-orange-600 font-semibold" : ""
-                }`
-              }
+      
+        <nav className="hidden md:flex space-x-8 text-[#F8F8F8] font-[Poppins] font-medium">
+          {links.map(({ to, label }) => (
+            <Link
+              key={to}
+              to={to}
+              className={`relative group transition ${
+                location.pathname === to ? "text-[#38BDF8]" : "hover:text-[#38BDF8]"
+              }`}
             >
-              {item.name}
-            </NavLink>
+              {label}
+              <span
+                className={`absolute left-0 bottom-1 h-0.5 bg-[#38BDF8] transition-all duration-300 ${
+                  location.pathname === to ? "w-full" : "w-0 group-hover:w-full"
+                }`}
+              />
+            </Link>
           ))}
-          <Link
-            to="/admin"
-            className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-all duration-300"
-          >
-            Admin
-          </Link>
         </nav>
 
-        {/* === Mobile Menu Button === */}
+        
         <button
-          onClick={() => setOpen(!open)}
-          className="md:hidden text-orange-600"
+          className="md:hidden text-[#F8F8F8] hover:text-[#38BDF8] transition"
+          onClick={() => setIsOpen((s) => !s)}
+          aria-label="Toggle menu"
         >
-          {open ? <X size={28} /> : <Menu size={28} />}
+          {isOpen ? <X size={28} /> : <Menu size={28} />}
         </button>
       </div>
 
-      {/* === Mobile Dropdown === */}
-      {open && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
+      
+      {isOpen && (
+        <motion.nav
+          initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="md:hidden bg-white shadow-inner py-4 flex flex-col items-center gap-4"
+          className="md:hidden bg-[#050A1F] text-center py-4 space-y-4 border-t border-[#151B2E]"
         >
-          {navItems.map((item, index) => (
-            <NavLink
-              key={index}
-              to={item.path}
-              onClick={() => setOpen(false)}
-              className={({ isActive }) =>
-                `transition-all duration-300 hover:text-orange-600 ${
-                  isActive ? "text-orange-600 font-semibold" : "text-gray-700"
-                }`
-              }
+          {links.map(({ to, label }) => (
+            <Link
+              key={to}
+              to={to}
+              onClick={() => setIsOpen(false)}
+              className={`block text-lg ${
+                location.pathname === to ? "text-[#38BDF8]" : "text-[#F8F8F8] hover:text-[#38BDF8]"
+              }`}
             >
-              {item.name}
-            </NavLink>
+              {label}
+            </Link>
           ))}
-          <Link
-            to="/admin"
-            onClick={() => setOpen(false)}
-            className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-all duration-300"
-          >
-            Admin
-          </Link>
-        </motion.div>
+        </motion.nav>
       )}
     </header>
   );
