@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Mail, MessageCircle, Linkedin, Github, Instagram } from "lucide-react";
 
 export default function Contact() {
-  const email = "hajnjpk2121@gmail.com";
+  const email = "hammad.azeem2121@gmail.com";
   const whatsappNumber = "923350502307";
   const linkedinUrl = "https://www.linkedin.com/in/hammad-azeem-61495a215";
   const githubUrl = "https://github.com/Hammad2323";

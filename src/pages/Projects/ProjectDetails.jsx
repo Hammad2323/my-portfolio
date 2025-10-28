@@ -25,7 +25,7 @@ export default function ProjectDetail() {
 
   const isAdmin = localStorage.getItem("adminAuth") === "true";
 
-  // Fetch project data
+  
   useEffect(() => {
     const fetchProject = async () => {
       try {
@@ -41,7 +41,7 @@ export default function ProjectDetail() {
     fetchProject();
   }, [id]);
 
-  // Screenshot prevention
+  
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "PrintScreen") {
@@ -158,7 +158,7 @@ export default function ProjectDetail() {
           {project.description}
         </p>
 
-        {/* Images Grid */}
+
         {project.images && project.images.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
             {project.images.map((url, index) => (
@@ -201,7 +201,7 @@ export default function ProjectDetail() {
           </div>
         )}
 
-        {/* Video Section */}
+        
         {project.videoUrl && (
           <div className="mt-6 relative">
             <h2 className="text-xl sm:text-2xl font-[Orbitron] text-[#8B5CF6] mb-3">
@@ -234,7 +234,7 @@ export default function ProjectDetail() {
           </div>
         )}
 
-        {/* Add Media Button */}
+        
         {isAdmin && (
           <div className="mt-8 text-center">
             <button
@@ -247,7 +247,7 @@ export default function ProjectDetail() {
         )}
       </motion.div>
 
-      {/* Enlarged View */}
+    
       <AnimatePresence>
         {enlargedMedia && (
           <motion.div
@@ -287,7 +287,7 @@ export default function ProjectDetail() {
         )}
       </AnimatePresence>
 
-      {/* Edit Modal */}
+    
       <AnimatePresence>
         {editing.type && (
           <motion.div
@@ -323,7 +323,7 @@ export default function ProjectDetail() {
         )}
       </AnimatePresence>
 
-      {/* Add Media Modal */}
+      
       <AnimatePresence>
         {addingMedia && (
           <motion.div
@@ -359,7 +359,7 @@ export default function ProjectDetail() {
         )}
       </AnimatePresence>
 
-      {/* Screenshot Warning */}
+    
       <AnimatePresence>
         {screenshotAttempt && (
           <motion.div

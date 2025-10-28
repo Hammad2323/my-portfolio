@@ -1,69 +1,97 @@
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Mail, MessageCircle, Linkedin, Github, Instagram } from "lucide-react";
+import React from "react";
+import { motion } from "framer-motion";
+import "@fontsource/poppins/500.css";
+import "@fontsource/orbitron/700.css";
 
 export default function Footer() {
-  const email = "hajnjpk2121@gmail.com";
-  const whatsappNumber = "923350502307";
-  const linkedinUrl = "https://www.linkedin.com/in/hammad-azeem-61495a215";
-  const githubUrl = "https://github.com/Hammad2323";
-  const instagramUrl = "https://www.instagram.com/hhammad23";
-
-  const [toast, setToast] = useState("");
-
-  const handleClick = (message, link) => {
-    setToast(message);
-    window.open(link, "_blank", "noopener,noreferrer");
-
-    setTimeout(() => {
-      setToast("");
-    }, 2000);
-  };
-
   return (
-    <footer className="relative bg-[#050A1F] border-t border-[#1A1F35] py-10 text-center font-[Poppins] overflow-hidden">
-  
-      <AnimatePresence>
-        {toast && (
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 30 }}
-            transition={{ duration: 0.4 }}
-            className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-gradient-to-r from-[#8B5CF6] to-[#38BDF8] text-[#0A0F24] px-6 py-3 rounded-full shadow-lg font-semibold text-sm"
-          >
-            {toast}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
+    <footer className="bg-[#0A0F24] text-[#E5E5E5] border-t border-[#1F2A44] py-10 font-[Poppins] select-none">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        viewport={{ once: true }}
+        className="max-w-6xl mx-auto flex flex-col items-center gap-6"
+      >
       
-      <div className="flex justify-center gap-8 mb-6 flex-wrap">
-        {[
-          { icon: Mail, link: `mailto:${email}`, msg: "Opening Email..." },
-          { icon: MessageCircle, link: `https://wa.me/${whatsappNumber}`, msg: "Opening WhatsApp..." },
-          { icon: Linkedin, link: linkedinUrl, msg: "Opening LinkedIn..." },
-          { icon: Github, link: githubUrl, msg: "Opening GitHub..." },
-          { icon: Instagram, link: instagramUrl, msg: "Opening Instagram..." },
-        ].map((item, i) => (
-          <motion.button
-            key={i}
-            onClick={() => handleClick(item.msg, item.link)}
-            className="p-4 rounded-full bg-[#0E1530] hover:bg-[#1A234A] transition-all duration-300"
-            whileHover={{ scale: 1.2, rotate: 5 }}
-            whileTap={{ scale: 0.95 }}
+        <div className="flex flex-wrap justify-center gap-6 sm:gap-8">
+          <a
+            href="mailto:hammad.azeem2121@gmail.com"
+            className="hover:scale-110 transition-transform duration-300"
+            title="Email"
           >
-            <item.icon className="w-6 h-6 text-[#38BDF8]" />
-          </motion.button>
-        ))}
-      </div>
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/732/732200.png"
+              alt="Email"
+              className="w-7 h-7 opacity-90 hover:opacity-100"
+            />
+          </a>
 
-      <div className="w-24 h-[2px] mx-auto bg-gradient-to-r from-[#8B5CF6] to-[#38BDF8] mb-4"></div>
+          <a
+            href="https://www.linkedin.com/in/hammad-azeem-61495a215"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:scale-110 transition-transform duration-300"
+            title="LinkedIn"
+          >
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/174/174857.png"
+              alt="LinkedIn"
+              className="w-7 h-7 opacity-90 hover:opacity-100"
+            />
+          </a>
 
-      <p className="text-[#B3B3B3] text-sm">
-        © {new Date().getFullYear()}{" "}
-        <span className="font-semibold text-[#38BDF8]">Hammad Azeem</span>. All Rights Reserved.
-      </p>
+          <a
+            href="https://wa.me/923350502307"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:scale-110 transition-transform duration-300"
+            title="WhatsApp"
+          >
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/733/733585.png"
+              alt="WhatsApp"
+              className="w-7 h-7 opacity-90 hover:opacity-100"
+            />
+          </a>
+
+          <a
+            href="https://github.com/Hammad2323"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:scale-110 transition-transform duration-300"
+            title="GitHub"
+          >
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/25/25231.png"
+              alt="GitHub"
+              className="w-7 h-7 opacity-90 hover:opacity-100"
+            />
+          </a>
+
+          <a
+            href="https://www.instagram.com/hhammad23"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:scale-110 transition-transform duration-300"
+            title="Instagram"
+          >
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png"
+              alt="Instagram"
+              className="w-7 h-7 opacity-90 hover:opacity-100"
+            />
+          </a>
+        </div>
+
+        
+        <div className="w-24 h-[2px] bg-gradient-to-r from-[#38BDF8] to-[#8B5CF6] rounded-full mt-4"></div>
+
+        
+        <p className="text-xs sm:text-sm text-gray-400 mt-3 text-center">
+          © {new Date().getFullYear()} All Rights Reserved.
+        </p>
+      </motion.div>
     </footer>
   );
 }
