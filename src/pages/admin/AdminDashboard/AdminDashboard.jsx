@@ -4,192 +4,229 @@ import {
   collection,
   addDoc,
   getDocs,
+  updateDoc,
   deleteDoc,
   doc,
   serverTimestamp,
 } from "firebase/firestore";
-import { uploadToCloudinary } from "../../../utils/uploadToCloudinary";
-import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import "@fontsource/poppins/500.css";
-import "@fontsource/orbitron/700.css";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function AdminDashboard() {
   const [projects, setProjects] = useState([]);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [images, setImages] = useState([]);
-  const [video, setVideo] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [editingProject, setEditingProject] = useState(null); // ✅ Modal project
+
+  const fetchProjects = async () => {
+    const querySnapshot = await getDocs(collection(db, "projects"));
+    const fetchedProjects = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    setProjects(fetchedProjects);
+    setLoading(false);
+  };
 
   useEffect(() => {
-    const fetchProjects = async () => {
-      const querySnapshot = await getDocs(collection(db, "projects"));
-      setProjects(
-        querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
-      );
-    };
     fetchProjects();
   }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!title.trim() || !description.trim()) {
-      alert("Please enter title and description");
-      return;
-    }
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this project?")) return;
+    await deleteDoc(doc(db, "projects", id));
+    setProjects(projects.filter((p) => p.id !== id));
+  };
 
-    setLoading(true);
+  const handleSaveEdit = async () => {
+    if (!editingProject) return;
+    const { id, title, description, websiteUrl, githubUrl, videoUrl } =
+      editingProject;
+
     try {
-      const imageUrls = [];
-      for (const image of images) {
-        const url = await uploadToCloudinary(image);
-        imageUrls.push(url);
-      }
-
-      let videoUrl = "";
-      if (video) {
-        videoUrl = await uploadToCloudinary(video);
-      }
-
-      await addDoc(collection(db, "projects"), {
+      const projectRef = doc(db, "projects", id);
+      await updateDoc(projectRef, {
         title,
         description,
-        images: imageUrls,
-        videoUrl,
-        timestamp: serverTimestamp(),
+        websiteUrl: websiteUrl || "",
+        githubUrl: githubUrl || "",
+        videoUrl: videoUrl || "",
+        updatedAt: serverTimestamp(),
       });
-
-      alert("✅ Project added successfully!");
-      setTitle("");
-      setDescription("");
-      setImages([]);
-      setVideo(null);
+      setEditingProject(null);
+      fetchProjects();
     } catch (error) {
-      console.error("Error adding project:", error);
-      alert("❌ Failed to add project. Check console for details.");
-    } finally {
-      setLoading(false);
+      console.error("Error updating project:", error);
     }
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm("Delete this project?")) {
-      await deleteDoc(doc(db, "projects", id));
-      setProjects((prev) => prev.filter((p) => p.id !== id));
-    }
-  };
-
-  const handleEdit = (id) => {
-    navigate(`/projects/${id}`); // 🔗 Redirect to ProjectDetail
-  };
+  if (loading)
+    return (
+      <div className="text-center text-gray-400 mt-20 text-lg">
+        Loading projects...
+      </div>
+    );
 
   return (
-    <section className="min-h-screen bg-gradient-to-b from-[#0A0F24] to-[#1A2238] text-[#E5E5E5] py-16 px-6 font-[Poppins]">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        className="max-w-5xl mx-auto bg-[#111827]/70 backdrop-blur-xl rounded-3xl shadow-2xl p-10 border border-[#2D3C5A]"
-      >
-        <h2 className="text-4xl font-[Orbitron] text-center text-[#C9A7FF] mb-10">
-          Admin Dashboard – Manage Projects
-        </h2>
+    <section className="min-h-screen bg-gradient-to-b from-[#0A0F24] to-[#1A2238] text-[#E5E5E5] py-12 px-4 sm:px-8 md:px-16 font-[Poppins]">
+      <h1 className="text-3xl font-[Orbitron] text-center text-[#C9A7FF] mb-10">
+        Admin Dashboard
+      </h1>
 
-        {/* 🧠 Add New Project */}
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-4 bg-[#0F172A]/70 p-6 rounded-2xl shadow-inner border border-[#2D3C5A] mb-12"
-        >
-          <input
-            type="text"
-            placeholder="Project Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full bg-[#0F172A] border border-[#334155] text-white p-3 rounded-lg focus:ring-2 focus:ring-[#8B5CF6]"
-          />
-
-          <textarea
-            placeholder="Project Description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="w-full bg-[#0F172A] border border-[#334155] text-white p-3 rounded-lg focus:ring-2 focus:ring-[#38BDF8]"
-            rows={4}
-          />
-
-          <div>
-            <label className="block font-medium text-[#C9A7FF] mb-2">
-              Upload Images
-            </label>
-            <input
-              type="file"
-              multiple
-              accept="image/*"
-              onChange={(e) => setImages([...e.target.files])}
-              className="w-full text-sm text-gray-400"
-            />
-          </div>
-
-          <div>
-            <label className="block font-medium text-[#C9A7FF] mb-2">
-              Upload Video (optional)
-            </label>
-            <input
-              type="file"
-              accept="video/*"
-              onChange={(e) => setVideo(e.target.files[0])}
-              className="w-full text-sm text-gray-400"
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="bg-gradient-to-r from-[#8B5CF6] to-[#38BDF8] text-white px-8 py-3 rounded-xl w-full font-semibold shadow-lg hover:opacity-90 transition-all duration-300"
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {projects.map((project) => (
+          <motion.div
+            key={project.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="bg-[#1E293B] border border-[#334155] rounded-2xl p-6 shadow-lg hover:shadow-[#8B5CF6]/30 transition-all"
           >
-            {loading ? "Uploading..." : "Add Project"}
-          </button>
-        </form>
+            <h2 className="text-xl font-semibold text-[#C9A7FF] mb-2">
+              {project.title}
+            </h2>
+            <p className="text-gray-300 text-sm mb-3 line-clamp-3">
+              {project.description}
+            </p>
+            {project.websiteUrl && (
+              <a
+                href={project.websiteUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#38BDF8] hover:underline text-sm block mb-1"
+              >
+                🌐 Website
+              </a>
+            )}
+            {project.githubUrl && (
+              <a
+                href={project.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#8B5CF6] hover:underline text-sm block mb-3"
+              >
+                💻 GitHub
+              </a>
+            )}
 
-        {/* 🗂 Existing Projects */}
-        <div>
-          <h3 className="text-2xl font-[Orbitron] text-[#8B5CF6] mb-6">
-            Existing Projects
-          </h3>
+            <div className="flex justify-between mt-4">
+              <button
+                onClick={() => setEditingProject(project)} // ✅ Opens modal
+                className="bg-[#38BDF8] hover:bg-[#0EA5E9] text-white px-3 py-1.5 rounded-lg text-sm"
+              >
+                ✏️ Edit
+              </button>
+              <button
+                onClick={() => handleDelete(project.id)}
+                className="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg text-sm"
+              >
+                🗑 Delete
+              </button>
+            </div>
+          </motion.div>
+        ))}
+      </div>
 
-          {projects.length === 0 ? (
-            <p className="text-gray-400 text-center">No projects found.</p>
-          ) : (
-            <ul className="space-y-4">
-              {projects.map((proj) => (
-                <li
-                  key={proj.id}
-                  className="flex justify-between items-center bg-[#0F172A]/60 border border-[#2D3C5A] p-4 rounded-xl shadow-md"
+      {/* ✅ Edit Modal */}
+      <AnimatePresence>
+        {editingProject && (
+          <motion.div
+            className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.9 }}
+              className="bg-[#1E293B] w-full max-w-lg p-6 rounded-2xl shadow-2xl text-white border border-[#334155]"
+            >
+              <h3 className="text-xl font-[Orbitron] text-[#C9A7FF] mb-4 text-center">
+                Edit Project
+              </h3>
+
+              <label className="block text-sm mb-1">Title</label>
+              <input
+                type="text"
+                value={editingProject.title}
+                onChange={(e) =>
+                  setEditingProject({ ...editingProject, title: e.target.value })
+                }
+                className="w-full px-3 py-2 mb-3 rounded-lg bg-[#0F172A] border border-[#334155] text-white"
+              />
+
+              <label className="block text-sm mb-1">Description</label>
+              <textarea
+                value={editingProject.description}
+                onChange={(e) =>
+                  setEditingProject({
+                    ...editingProject,
+                    description: e.target.value,
+                  })
+                }
+                rows="4"
+                className="w-full px-3 py-2 mb-3 rounded-lg bg-[#0F172A] border border-[#334155] text-white"
+              />
+
+              <label className="block text-sm mb-1">Website URL</label>
+              <input
+                type="text"
+                value={editingProject.websiteUrl || ""}
+                onChange={(e) =>
+                  setEditingProject({
+                    ...editingProject,
+                    websiteUrl: e.target.value,
+                  })
+                }
+                className="w-full px-3 py-2 mb-3 rounded-lg bg-[#0F172A] border border-[#334155] text-white"
+                placeholder="Optional"
+              />
+
+              <label className="block text-sm mb-1">GitHub URL</label>
+              <input
+                type="text"
+                value={editingProject.githubUrl || ""}
+                onChange={(e) =>
+                  setEditingProject({
+                    ...editingProject,
+                    githubUrl: e.target.value,
+                  })
+                }
+                className="w-full px-3 py-2 mb-3 rounded-lg bg-[#0F172A] border border-[#334155] text-white"
+                placeholder="Optional"
+              />
+
+              <label className="block text-sm mb-1">Video URL</label>
+              <input
+                type="text"
+                value={editingProject.videoUrl || ""}
+                onChange={(e) =>
+                  setEditingProject({
+                    ...editingProject,
+                    videoUrl: e.target.value,
+                  })
+                }
+                className="w-full px-3 py-2 mb-5 rounded-lg bg-[#0F172A] border border-[#334155] text-white"
+                placeholder="Optional"
+              />
+
+              <div className="flex justify-end gap-2 mt-4">
+                <button
+                  onClick={handleSaveEdit}
+                  className="bg-[#38BDF8] hover:bg-[#0EA5E9] px-5 py-2 rounded-lg text-white"
                 >
-                  <span className="text-lg font-medium text-[#E5E5E5]">
-                    {proj.title}
-                  </span>
-                  <div className="flex gap-3">
-                    <button
-                      onClick={() => handleEdit(proj.id)}
-                      className="bg-[#38BDF8]/80 hover:bg-[#38BDF8] text-white px-4 py-2 rounded-lg transition"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(proj.id)}
-                      className="bg-red-500/80 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      </motion.div>
+                  Save Changes
+                </button>
+                <button
+                  onClick={() => setEditingProject(null)}
+                  className="bg-gray-600 hover:bg-gray-700 px-5 py-2 rounded-lg"
+                >
+                  Cancel
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

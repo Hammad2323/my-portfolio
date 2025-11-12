@@ -25,7 +25,6 @@ export default function ProjectDetail() {
 
   const isAdmin = localStorage.getItem("adminAuth") === "true";
 
-  
   useEffect(() => {
     const fetchProject = async () => {
       try {
@@ -41,7 +40,6 @@ export default function ProjectDetail() {
     fetchProject();
   }, [id]);
 
-  
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "PrintScreen") {
@@ -158,6 +156,20 @@ export default function ProjectDetail() {
           {project.description}
         </p>
 
+        {/* ✅ Website URL is now shown as clickable visible link */}
+        {project.websiteUrl && (
+          <p className="mt-4 mb-8">
+            🌐{" "}
+            <a
+              href={project.websiteUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#38BDF8] hover:underline break-all"
+            >
+              {project.websiteUrl}
+            </a>
+          </p>
+        )}
 
         {project.images && project.images.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
@@ -201,7 +213,6 @@ export default function ProjectDetail() {
           </div>
         )}
 
-        
         {project.videoUrl && (
           <div className="mt-6 relative">
             <h2 className="text-xl sm:text-2xl font-[Orbitron] text-[#8B5CF6] mb-3">
@@ -234,7 +245,6 @@ export default function ProjectDetail() {
           </div>
         )}
 
-        
         {isAdmin && (
           <div className="mt-8 text-center">
             <button
@@ -247,7 +257,6 @@ export default function ProjectDetail() {
         )}
       </motion.div>
 
-    
       <AnimatePresence>
         {enlargedMedia && (
           <motion.div
@@ -287,7 +296,6 @@ export default function ProjectDetail() {
         )}
       </AnimatePresence>
 
-    
       <AnimatePresence>
         {editing.type && (
           <motion.div
@@ -323,7 +331,6 @@ export default function ProjectDetail() {
         )}
       </AnimatePresence>
 
-      
       <AnimatePresence>
         {addingMedia && (
           <motion.div
@@ -359,7 +366,6 @@ export default function ProjectDetail() {
         )}
       </AnimatePresence>
 
-    
       <AnimatePresence>
         {screenshotAttempt && (
           <motion.div
